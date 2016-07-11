@@ -1,0 +1,125 @@
+一、block的应用场景
+
+   1、对象与对象之间的通信方式
+
+     1）代理-协议，1对1
+     2）通知，1对多
+     3）block，1对1，但不需要协议
+
+   2、block介绍
+
+     block是iOS4.0之后新增的一种语法结构，也称为闭包，block是一个匿名的函数代码块，此代码块可以作为参数传递给其他对象
+
+     PS：每一个block都是一个可以有参数和返回值的方法
+
+二、block的使用
+
+    1、简单使用
+
+      1）block变量的声明，类似声明一个普通对象
+
+        返回值  block变量    参数
+        int   (^ myBlocks)(int a); 
+
+      2）block的创建，类似将一个对象给实例化
+
+         myBlocks= ^(int a){ 
+       
+           int result = a * a; 
+    
+           return result; 
+         };
+
+      3）block的调用，类似使用对象
+
+          int ret = myBlocks(10); 
+
+    2、上一种方式每次我要使用一个block变量都需要声明否则会直接将之前的覆盖掉,为了方法我们可以定义一种blcok类型，用这种block类型来声明多个类似的block变量
+
+       1） 定义block类型
+
+          typedef int (^MyBlock)(int a); 
+
+       2） 创建block对象
+
+          MyBlock myBlock = ^(int a){ 
+   
+              int result = a * a; 
+              return result; 
+          };
+
+       3)  block的调用
+
+          int ret = myBlocks(10); 
+
+
+三、block作为参数
+
+     之前我们都是将字符串、字典、数组等作为参数传递，没有过将某一个方法做为参数传递，今天就通过block将参数传进来
+
+     1） 定义block类型
+
+          typedef int (^MyBlock)(int a); 
+
+     2） 在延展中声明一个方法，该方法有一个block参数
+ 
+          - (void)objectMethod:(MyBlock)myblock
+
+     3） 在类中实现这个方法
+      
+         - (void)testBlock:(MyBlock)myBlock {
+    
+           //让执行传进来的代码块
+           myBlock(10);
+    
+         }
+
+     4） 在viewDidLoad中调用这个方法
+
+         1、第一种方式
+
+           MyBlock block = ^(int a){
+      
+             return a;
+           };
+    
+           [self testBlock:block];
+
+          2、第二种方式
+
+            [self testBlock:^int(int a) {
+     
+              return a;
+
+            }];
+
+三、blocks和变量
+
+    变量按作用域分有全局变量和局部变量，block代码块内可以引用这两种变量，但是有不同的管理机制
+
+    1、引用局部变量
+
+       block引用局部变量时，该变量会作为常量编码到block块中。局部变量需要使用__block修饰，才能在block块中修改。
+
+       int number = 10; 
+
+       MyBlock testBlock= ^(int a){ 
+  
+         number = 20; //错误不能重新赋值
+         NSLog(@"%d",number); 
+       };
+
+       将int number = 10，改为__block int number = 10,便可重新赋值
+
+    2、全局变量的话可以直接在block中赋值
+
+
+四、练习
+
+    分别采用代理和block的方式来让控制器监听对自定义label的点击事件
+
+
+    使用block来代替代理实现反向传值
+
+    
+
